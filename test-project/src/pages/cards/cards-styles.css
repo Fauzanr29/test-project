@@ -1,0 +1,11 @@
+
+.cards-img{
+    height: 12rem;
+    width: 15rem;
+    object-fit: cover;
+
+}
+
+@media screen and (max-width:600px){
+    
+}
