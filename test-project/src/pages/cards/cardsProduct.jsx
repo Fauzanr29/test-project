@@ -9,6 +9,7 @@ import {
     DropdownButton,
     CardGroup,
     Modal,
+    Pagination,
 } from 'react-bootstrap'
 import { useState, useEffect } from "react";
 import axios from 'axios'
@@ -32,13 +33,15 @@ const CardsProduct = () => {
 
 
     const fetchData = async () => {
-
-        const response = await axios.get(`http://localhost:5000/recipes?search_query=${keyword}&page=${page}&limit=${limit}`);
+        try{
+            const response = await axios.get(`http://localhost:5000/recipes?search_query=${keyword}&page=${page}&limit=${limit}`);
             setRecipes(response.data.result);
             setPage(response.data.page);
-            setTotalPage(response.data.totalPages);
+            setTotalPage(response.data.totalPage);
             setRows(response.data.totalRows)
-
+        } catch(error){
+            console.log(error);
+        }
     }
 
     const deleteRecipe = async (recipeId) => {
@@ -139,16 +142,17 @@ const CardsProduct = () => {
                         <Row className="g-4">
                             <p>Total Rows: {rows} Page: {rows ? page + 1 : 0} of {totalPages}</p>
                             <ReactPaginate
+                                className="paginate"
                                 previousLabel={"< Prev"}
                                 nextLabel={"Next >"}
                                 pageCount={Math.min(10, totalPages)}
                                 onPageChange={changePage}
-                                containerClassName={"pagination-list"}
-                                pageLinkClassName={"pagination-link"}
-                                previousLinkClassName={"pagination-previous"}
-                                nextLinkClassName={"pagination-next"}
-                                activeLinkClassName={"pagination-link is-current"}
-                                disabledLinkClassName={"pagination-link is-disabled"}
+                                containerClassName={"pagination"}
+                                pageLinkClassName={"page-num"}
+                                previousLinkClassName={"page-num"}
+                                nextLinkClassName={"page-num"}
+                                activeLinkClassName={"active"}
+                                disabledLinkClassName={"disbled"}
                             />
                         </Row>
                     </Row>

@@ -6,6 +6,52 @@
 
 }
 
+.paginate{
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5rem;
+    font-size: 100%;
+    gap: 5px;
+    
+    
+}
+
+.paginate .page-num{
+    padding: 8px 15px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    font-weight: 400;
+    text-decoration: none;
+    color: black;
+    float: left;
+    padding: 8px 16px;
+}
+
+.paginate .page-num:hover{
+    background-color: #5AB1BB;
+    color: #ffff
+}
+
+.pagination .page-num:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.pagination .page-num:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.pagination .page-num:hover:not(.active) {background-color: #ddd;}
+
+.paginate .active{
+    background-color: #5AB1BB;
+    color: white;
+    border: 1px solid #4CAF50;
+}
+
 @media screen and (max-width:600px){
     
 }
