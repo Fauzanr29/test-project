@@ -85,6 +85,7 @@ const FormRecipe = ({ setFormVisible, type, fetchData, formEdited }) => {
                     <Form.Control
                         type="text"
                         placeholder="nama recipe"
+                        required
                         value={title}
                         onChange={(e) => setName(e.target.value)}
                     />

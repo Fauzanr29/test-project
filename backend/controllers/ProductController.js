@@ -1,11 +1,47 @@
 import Recipe from "../models/ProductModels.js";
 import path from 'path'
 import fs from 'fs'
+import { Op } from 'sequelize'
 
 export const getRecipe = async (req, res) => {
+    // try {
+    //     const response = await Recipe.findAll();
+    //     res.json(response)
+    // } catch (error) {
+    //     console.log(error.message);
+    // }
     try {
-        const response = await Recipe.findAll();
-        res.json(response)
+        const page = parseInt(req.query.page) || 0;
+        const limit = parseInt(req.query.limit) || 10;
+        const search = req.query.search_query || "";
+        const offset = limit * page;
+        const totalRows = await Recipe.count({
+            where: {
+                [Op.or]: [{
+                    name: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }]
+            }
+        });
+        const totalPage = Math.ceil(totalRows / limit);
+        const result = await Recipe.findAll({
+            where: {
+                [Op.or]: [{
+                    name: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }]
+            },
+            offset: offset,
+            limit: limit,
+            order: [
+                ['id', 'DESC']
+            ]
+        });
+        res.json({
+            result: result, page:page, limit:limit, totalPage:totalPage, totalRows:totalRows
+        });
     } catch (error) {
         console.log(error.message);
     }
@@ -13,12 +49,12 @@ export const getRecipe = async (req, res) => {
 
 export const getRecipeById = async (req, res) => {
     try {
-        const response = await Recipe.findOne({
+        const result = await Recipe.findOne({
             where: {
                 id: req.params.id
             }
         });
-        res.json(response)
+        res.json(result)
     } catch (error) {
         console.log(error.message);
     }

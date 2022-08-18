@@ -1,7 +1,6 @@
 import React from "react";
 import {
     Row,
-    Pagination,
     Button,
     Card,
     Col,
@@ -15,6 +14,7 @@ import { useState, useEffect } from "react";
 import axios from 'axios'
 import './cards-styles.css'
 import FormRecipe from '../recipe/form';
+import ReactPaginate from 'react-paginate'
 
 const CardsProduct = () => {
     const [recipes, setRecipes] = useState([]);
@@ -22,15 +22,29 @@ const CardsProduct = () => {
     const [formVisible, setFormVisible] = useState(false)
     const [formEdited, setEditedForm] = useState(false)
 
-    const getRecipes = async () => {
-        const response = await axios.get('http://localhost:5000/recipes');
-        setRecipes(response.data);
+    const [page, setPage] = useState(0);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPage] = useState(0);
+    const [rows, setRows] = useState(0);
+    const [keyword, setKeyword] = useState('');
+    const [query, setQuery] = useState("");
+    const [msg, setMsg] = useState("");
+
+
+    const fetchData = async () => {
+
+        const response = await axios.get(`http://localhost:5000/recipes?search_query=${keyword}&page=${page}&limit=${limit}`);
+            setRecipes(response.data.result);
+            setPage(response.data.page);
+            setTotalPage(response.data.totalPages);
+            setRows(response.data.totalRows)
+
     }
 
     const deleteRecipe = async (recipeId) => {
         try {
             await axios.delete(`http://localhost:5000/recipes/${recipeId}`)
-            getRecipes();
+            fetchData();
         } catch (err) {
             console.log(err);
         }
@@ -42,17 +56,31 @@ const CardsProduct = () => {
         setFormVisible(true)
     }
 
-    const fetchData = async() =>{
-        await axios.get(`http://localhost:5000/recipes/`)
-        .then(({data}) => {
-            setRecipes(data)
-        })
-        .catch(err => console.log(err))
+    const changePage = ({ selected }) => {
+        setPage(selected)
+        if (selected === 9) {
+            setMsg(
+                "Jika tidak menemukan data yang Anda cari, silahkan cari data dengan kata kunci spesifik!"
+            );
+        } else {
+            setMsg("");
+        }
     }
+
+    // const fetchData = async () => {
+    //     await axios.get(`http://localhost:5000/recipes?search_query=${keyword}&page=${page}&limit=${limit}`)
+    //         .then(({ data }) => {
+    //             setRecipes(data)
+    //             setPage(data.page);
+    //             setTotalPage(data.totalPages);
+    //             setRows(data.totalRows)
+    //         })
+    //         .catch(err => console.log(err))
+    // }
 
     useEffect(() => {
         fetchData();
-    }, [])
+    }, [page, keyword])
 
     return (
         <div className="d-flex container-fluid">
@@ -77,6 +105,7 @@ const CardsProduct = () => {
                         </Col>
                         <hr className='divider' />
                         <Row className="g-4" md={5}>
+
                             {recipes.map((recipe) => (
                                 <CardGroup>
                                     <Card className="cardz" key={recipe.id}>
@@ -90,7 +119,6 @@ const CardsProduct = () => {
                                         <Card.Footer className="d-flex justify-content-center" id="footer-cards">
                                             <Row>
                                                 <Col>
-
                                                     <Button
                                                         variant="outline-warning"
                                                         onClick={() => handleEditRecipe(recipe)}
@@ -108,6 +136,21 @@ const CardsProduct = () => {
                                 </CardGroup>
                             ))}
                         </Row>
+                        <Row className="g-4">
+                            <p>Total Rows: {rows} Page: {rows ? page + 1 : 0} of {totalPages}</p>
+                            <ReactPaginate
+                                previousLabel={"< Prev"}
+                                nextLabel={"Next >"}
+                                pageCount={Math.min(10, totalPages)}
+                                onPageChange={changePage}
+                                containerClassName={"pagination-list"}
+                                pageLinkClassName={"pagination-link"}
+                                previousLinkClassName={"pagination-previous"}
+                                nextLinkClassName={"pagination-next"}
+                                activeLinkClassName={"pagination-link is-current"}
+                                disabledLinkClassName={"pagination-link is-disabled"}
+                            />
+                        </Row>
                     </Row>
                 </div>
             </Container>
@@ -117,8 +160,8 @@ const CardsProduct = () => {
                     <FormRecipe
                         type={formType}
                         setFormVisible={setFormVisible}
-                        formEdited ={formEdited}
-                        fetchData = {fetchData}
+                        formEdited={formEdited}
+                        fetchData={fetchData}
                     />
                 </Modal.Body>
             </Modal>
@@ -152,3 +195,5 @@ export default CardsProduct;
     onClick={() => handleEditRecipe()}
 >Edit
 </Button></Link> */}
+
+
