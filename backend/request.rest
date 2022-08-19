@@ -1,1 +1,19 @@
 Get http://localhost:5000/recipes?search_query=Nasi&page=0&limit10
+
+###
+GET http://localhost:5000/recipes
+
+###
+POST http://localhost:5000/recipes
+Content-Type: application/json
+
+[
+    {
+        "name": "Mapo Tofu",
+        "bahan": "tahu",
+        "steps": "",
+        "deskripsi": "",
+        "image": "15ba87a400f35381f15b9eb8690e1810.png",
+        "url": "http://localhost:5000/images/15ba87a400f35381f15b9eb8690e1810.png",
+    }
+]
